@@ -1,0 +1,19 @@
+# 빌드 산출물
+build/
+dist/
+*.spec
+build.log
+
+# 실행하면서 생기는 파일
+names_cache.json
+names_ko.json
+drop_defaults.json
+lang.txt
+
+# 게임 구조 분석 덤프 (tools/dump.py 의 출력)
+dump/
+
+# 파이썬 / 편집기
+__pycache__/
+*.pyc
+.claude/
