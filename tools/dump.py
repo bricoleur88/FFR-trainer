@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 bricoleur88
 """실행 중인 게임의 클래스/구조체 정의와 인스턴스 수를 덤프한다 (분석용).
 
 사용: python tools/dump.py [출력폴더]

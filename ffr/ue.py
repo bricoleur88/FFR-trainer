@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 bricoleur88
 """언리얼 엔진 5 런타임 리플렉션 리더.
 
 고정 오프셋 대신 실행 중인 게임에서 FNamePool / GUObjectArray 를 찾아

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 bricoleur88
 """FINAL FANTASY RESONANCE 게임 데이터 모델 (세이브 데이터 / 데이터 테이블)."""
 import json
 import os

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 bricoleur88
 """Windows 프로세스 메모리 읽기/쓰기 (ctypes, 외부 의존성 없음)."""
 import ctypes
 import struct

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 bricoleur88
 """게임이 현재 언어(한국어)로 표시하는 문자열을 메모리에서 읽는다.
 
 데이터 테이블의 이름(FText)은 문자열 테이블의 (네임스페이스, 키) ID 만 들고 있고,

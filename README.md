@@ -145,3 +145,17 @@ To build the executable yourself: `pip install pyinstaller`, then `python build_
 - There is no in-battle invincibility or one-hit kill.
 - 19 artifacts, 4 key items and 1 piece of equipment have no Korean text in the game; in the Korean interface their names are the author's own translations and may differ from in-game wording.
 - For the Steam single-player version only.
+
+## Disclaimer
+
+This is an unofficial fan-made tool. It is not affiliated with, endorsed by or supported by SQUARE ENIX CO., LTD. FINAL FANTASY and all related names, marks and game content are the property of their respective owners. The license below covers only the code in this repository, not the game.
+
+The software is provided without any warranty. Use it at your own risk and keep backups of your save data.
+
+## License
+
+Copyright (C) 2026 bricoleur88
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License, version 3, as published by the Free Software Foundation. It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See [LICENSE](LICENSE) for the full text.
+
+The distributable build bundles third-party components under their own licenses; see [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

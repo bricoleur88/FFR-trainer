@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 bricoleur88
 """FINAL FANTASY RESONANCE (Steam) 트레이너 — flet GUI.
 
 실행:  python trainer.py     (게임을 먼저 실행해 타이틀 화면 이후까지 진행)

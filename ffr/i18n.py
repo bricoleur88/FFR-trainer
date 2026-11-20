@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 bricoleur88
 """화면 문구 번역. 소스의 한국어 문구를 키로 쓰고, 영어/일본어 번역을 여기서 찾는다.
 
 언어 선택 순서:  실행 인자 `--lang en`  >  실행 파일(또는 프로젝트) 폴더의 lang.txt  >  Windows 표시 언어

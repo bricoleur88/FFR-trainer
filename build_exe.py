@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (C) 2026 bricoleur88
 """배포용 실행 파일을 빌드하고 zip 으로 묶는다.
 
 사용:  python build_exe.py                  빌드 + zip
@@ -5,7 +7,7 @@
 필요:  pip install "flet[all]" pyinstaller
 
 결과:  dist/FFR-Trainer/        빌드된 실행 파일 폴더
-       dist/FFR-Trainer.zip     배포용 (실행 파일 + 세 언어 README). 화면 언어는 프로그램 안에서 고른다.
+       dist/FFR-Trainer.zip     배포용 (실행 파일 + 세 언어 README + 라이선스). 화면 언어는 프로그램 안에서 고른다.
 """
 import builtins
 import os
@@ -20,7 +22,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 DIST = os.path.join(ROOT, "dist")
 APP = os.path.join(DIST, "FFR-Trainer")
 
-DOCS = ("README.md", "README.ko.md", "README.ja.md")
+DOCS = ("README.md", "README.ko.md", "README.ja.md", "LICENSE", "THIRD-PARTY-NOTICES.md")
 # 실행하면서 생긴 파일과 예전 문서는 배포본에 넣지 않는다
 RUNTIME_FILES = ("names_cache.json", "names_ko.json", "drop_defaults.json", "lang.txt", "사용법.md")
 OLD_ZIPS = ("FFR-Trainer-ko.zip", "FFR-Trainer-en.zip", "FFR-Trainer-ja.zip")  # 언어별로 나누던 시절의 묶음
