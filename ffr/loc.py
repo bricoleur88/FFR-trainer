@@ -20,6 +20,7 @@ class Localizer:
         self.p = ue.p
         self._ns = {}       # 문자열 테이블 경로 -> 네임스페이스 ID
         self._tables = None
+        self._entries = {}  # 문자열 테이블 경로 -> {키: 항목 주소}
         self.lookup = None  # (ns, key) -> 표시 문자열 객체 주소
 
     # ------------------------------------------------------------------ FText -> ID
@@ -47,6 +48,47 @@ class Localizer:
             return None
         ns = self._table_ns(table)
         return (ns, key) if ns is not None else None
+
+    # ------------------------------------------------------------------ 원문 문자열
+    def _table_entries(self, table_path):
+        """문자열 테이블의 {키: 항목 주소}. 항목 +0x10 에 원문(개발 언어 = 일본어) 문자열이 있다."""
+        if table_path not in self._entries:
+            p = self.p
+            self._table_ns(table_path)  # self._tables 준비
+            st = self._tables.get(table_path)
+            inner = p.u64(st + 0x28) if st else 0
+            out = {}
+            data, num = (p.u64(inner + 0x20), p.i32(inner + 0x28)) if inner else (0, 0)
+            raw = p.read(data, num * ELEM) if data and 0 < num < 200000 else None
+            if raw:
+                for i in range(num):
+                    key, _pad, entry = struct.unpack_from("<IIQ", raw, i * ELEM)
+                    if entry:
+                        out[key] = entry
+            self._entries[table_path] = out
+        return self._entries[table_path]
+
+    def source(self, ftext_addr):
+        """FText 의 원문 문자열 (게임 언어와 무관하게 일본어). 못 찾으면 None."""
+        p = self.p
+        data = p.u64(ftext_addr)
+        hist = p.u64(data + 0x18) if data else 0
+        raw = p.read(hist + 0x10, 12) if hist else None
+        if not raw:
+            return None
+        name_idx, name_num, key = struct.unpack("<III", raw)
+        table = self.ue.name(name_idx, name_num)
+        if not table.startswith("/"):
+            return None
+        entry = self._table_entries(table).get(key)
+        raw = p.read(entry + 0x10, 16) if entry else None
+        if not raw:
+            return None
+        ptr, num, cap = struct.unpack("<Qii", raw)
+        if not (0 < num <= 2048 and num <= cap):
+            return None
+        s = p.read(ptr, num * 2)
+        return s.decode("utf-16le", "replace").rstrip("\0") if s else None
 
     # ------------------------------------------------------------------ 표시 문자열
     def _display(self, obj):

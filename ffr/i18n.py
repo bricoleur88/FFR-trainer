@@ -86,6 +86,9 @@ TR = {
                                          " — 名前を読み込み中… (数秒かかります)"),
     " — 한국어 이름을 찾지 못해 원문으로 표시": (" — names not found, showing internal names",
                                       " — 名前が見つからないため内部名で表示"),
+    " — 이름은 {lang}(으)로 표시 (이 언어의 이름은 게임을 그 언어로 한 번 실행해 '이름 다시 읽기')": (
+        " — names shown in {lang} (run the game once in this language and press 'Reload names' to get them)",
+        " — 名前は {lang} で表示 (この言語の名前は、ゲームをその言語で一度起動して「名前を再読込」)"),
     "먼저 게임에 연결하세요.": ("Connect to the game first.", "先にゲームに接続してください。"),
     "게임이 종료되었습니다 — 다시 실행 후 '게임에 연결'": (
         "The game has closed — start it again, then press 'Connect to game'",

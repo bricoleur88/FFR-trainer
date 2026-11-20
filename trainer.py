@@ -204,7 +204,8 @@ class App:
                 slider.value, switch.value, label.value = value, always, f"×{float(value):g}"
             g = self.game
             if g and g.p.alive():
-                self.status.value = _("연결됨 (PID {pid})", pid=g.p.pid)
+                g.apply_names()
+                self.status.value = self.status_text()
                 self.fill_battle()
                 self.refresh_all()
             else:
@@ -260,6 +261,16 @@ class App:
                 self.alert(str(e))
         return run
 
+    def status_text(self):
+        """연결 상태 문구. 화면 언어의 이름이 아직 없으면 그 사실을 덧붙인다."""
+        g = self.game
+        text = _("연결됨 (PID {pid})", pid=g.p.pid)
+        shown = getattr(g, "names_lang", None)
+        if shown and shown != get_lang():
+            text += _(" — 이름은 {lang}(으)로 표시 (이 언어의 이름은 게임을 그 언어로 한 번 실행해 '이름 다시 읽기')",
+                      lang=LANG_NAMES.get(shown, shown))
+        return text
+
     def set_status(self, text):
         self.status.value = text
         self.status.update()
@@ -289,10 +300,10 @@ class App:
             if force or not g.has_name_cache():
                 self.set_status(base + _(" — 한국어 이름 읽는 중… (몇 초 걸립니다)"))
             try:
-                ok = g.load_korean_names(force=force)
+                ok = g.load_names(force=force)
             except Exception:  # noqa: BLE001
                 ok = False
-            self.set_status(base if ok else base + _(" — 한국어 이름을 찾지 못해 원문으로 표시"))
+            self.set_status(self.status_text() if ok else base + _(" — 한국어 이름을 찾지 못해 원문으로 표시"))
         self.refresh_all()
 
     # ------------------------------------------------------------------ 일반 탭

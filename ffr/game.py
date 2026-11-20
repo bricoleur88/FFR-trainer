@@ -6,7 +6,7 @@ import os
 import struct
 import sys
 
-from .i18n import _
+from .i18n import _, get_lang
 from .loc import Localizer
 from .ue import UE
 
@@ -36,6 +36,18 @@ FALLBACK_KO = {
 
 def _has_hangul(s):
     return bool(s) and any("가" <= c <= "힣" for c in s)
+
+
+def _guess_lang(names):
+    """이름 목록이 어느 언어인지 글자 종류로 판단한다 (ko / ja / en)."""
+    ko = sum(1 for n in names if _has_hangul(n))
+    ja = sum(1 for n in names if not _has_hangul(n)
+             and any("\u3040" <= c <= "\u30ff" or "\u4e00" <= c <= "\u9fff" for c in n))
+    if names and ko > len(names) / 2:
+        return "ko"
+    if names and ja > len(names) / 2:
+        return "ja"
+    return "en"
 
 # eUnitParameterType 중 baseParameterList(영구 보너스)로 의미 있는 항목
 STAT_NAMES = {1: "최대 HP", 2: "최대 MP", 5: "공격", 6: "방어", 7: "지능", 8: "정신", 9: "민첩"}
@@ -206,52 +218,101 @@ class Game:
                 r_cnt += 1
         return (n_sum / n_cnt if n_cnt else 0, r_sum / r_cnt if r_cnt else 0, n_cnt, r_cnt)
 
-    # ------------------------------------------------------------------ 한국어 이름
+    # ------------------------------------------------------------------ 이름 (언어별)
+    def _read_cache(self):
+        try:
+            with open(CACHE, encoding="utf-8") as f:
+                data = json.load(f)
+        except (OSError, ValueError):
+            return None
+        # 예전 형식(언어 구분 없음)은 버리고 다시 읽는다
+        if not isinstance(data, dict) or "names" not in data or "game_lang" not in data:
+            return None
+        return data
+
     def has_name_cache(self):
-        return os.path.exists(CACHE)
+        return self._read_cache() is not None
 
-    def load_korean_names(self, force=False):
-        """아이템·캐릭터 이름을 게임의 한국어 텍스트로 바꾼다.
+    def name_languages(self):
+        """저장해 둔 이름이 있는 언어 목록."""
+        data = self._read_cache()
+        return sorted(data["names"]) if data else []
 
-        처음에는 게임 메모리를 훑느라 몇 초 걸리고, 결과는 names_ko.json 에 저장해 재사용한다.
+    def load_names(self, force=False, ui_lang=None):
+        """아이템·캐릭터 이름을 읽어 화면 언어에 맞춰 적용한다.
+
+        게임은 현재 언어의 텍스트만 메모리에 올리므로, 읽을 수 있는 것은
+        '게임이 실행 중인 언어'의 이름과 원문(일본어) 이름 두 가지다. 읽은 이름은 언어별로
+        names_cache.json 에 쌓아 두고, 화면 언어의 이름이 있으면 그것을, 없으면 게임 언어의
+        이름을 쓴다. 처음(또는 force)에는 게임 메모리를 훑느라 몇 초 걸린다.
         """
-        data = None
-        if not force and os.path.exists(CACHE):
-            try:
-                with open(CACHE, encoding="utf-8") as f:
-                    data = json.load(f)
-            except (OSError, ValueError):
-                data = None
+        data = None if force else self._read_cache()
         if data is None:
-            loc = Localizer(self.ue)
-            sample = next((loc.text_id(a) for a in self._item_text.values() if loc.text_id(a)), None)
-            if not sample or not loc.locate(sample):
+            scanned = self._scan_names()
+            if scanned is None:
                 return False
-            data = {"items": {}, "units": {}}
-            for kind, texts in (("items", self._item_text), ("units", self._unit_text)):
-                for key, addr in texts.items():
-                    s = loc.resolve(addr)
-                    if s:
-                        data[kind][str(key)] = s
-            # 게임 언어가 한국어일 때만, 게임에 번역이 없어 일본어로 남은 이름을 직접 번역으로 채운다
-            names = [n for kind in data.values() for n in kind.values()]
-            if names and sum(_has_hangul(n) for n in names) > len(names) / 2:
-                for kind in data.values():
-                    for key, s in kind.items():
-                        if not _has_hangul(s):
-                            kind[key] = FALLBACK_KO.get(s, s)
+            game_lang, by_lang = scanned
+            data = self._read_cache() or {"names": {}}
+            data["game_lang"] = game_lang
+            data["names"].update(by_lang)
             try:
                 with open(CACHE, "w", encoding="utf-8") as f:
                     json.dump(data, f, ensure_ascii=False, indent=0)
             except OSError:
                 pass
-        for key, s in data.get("items", {}).items():
+        self._names = data
+        self.apply_names(ui_lang)
+        return True
+
+    load_korean_names = load_names  # 예전 이름 (trainer_tk.py 가 사용)
+
+    def apply_names(self, ui_lang=None):
+        """저장된 이름 중 화면 언어의 것을 적용한다. 실제로 적용된 언어를 돌려준다."""
+        data = getattr(self, "_names", None)
+        if not data:
+            return None
+        lang = ui_lang or get_lang()
+        if lang not in data["names"]:
+            lang = data["game_lang"]
+        names = data["names"].get(lang)
+        if not names:
+            return None
+        for key, s in names.get("items", {}).items():
             iid = int(key)
             if iid in self.items:
                 self.items[iid] = (s, self.items[iid][1])
-        for key, s in data.get("units", {}).items():
+        for key, s in names.get("units", {}).items():
             self.unit_names[int(key)] = s
-        return True
+        self.names_lang = lang
+        return lang
+
+    def _scan_names(self):
+        """게임 메모리에서 이름을 읽는다: (게임 언어, {언어: {"items": {...}, "units": {...}}})."""
+        loc = Localizer(self.ue)
+        sample = next((loc.text_id(a) for a in self._item_text.values() if loc.text_id(a)), None)
+        if not sample or not loc.locate(sample):
+            return None
+        shown = {"items": {}, "units": {}}   # 게임이 지금 표시하는 언어
+        source = {"items": {}, "units": {}}  # 원문 (일본어)
+        for kind, texts in (("items", self._item_text), ("units", self._unit_text)):
+            for key, addr in texts.items():
+                s = loc.resolve(addr)
+                if s:
+                    shown[kind][str(key)] = s
+                s = loc.source(addr)
+                if s:
+                    source[kind][str(key)] = s
+        game_lang = _guess_lang([n for kind in shown.values() for n in kind.values()])
+        if game_lang == "ko":
+            # 게임에 한국어 번역이 없어 일본어로 남은 이름은 직접 번역으로 채운다
+            for kind in shown.values():
+                for key, s in kind.items():
+                    if not _has_hangul(s):
+                        kind[key] = FALLBACK_KO.get(s, s)
+        out = {game_lang: shown}
+        if game_lang != "ja" and _guess_lang([n for kind in source.values() for n in kind.values()]) == "ja":
+            out["ja"] = source
+        return game_lang, out
 
     def level_table(self, uid):
         t = self.unit_levels.get(uid)

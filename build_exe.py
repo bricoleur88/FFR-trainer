@@ -4,6 +4,7 @@
 
 사용:  python build_exe.py                  빌드 + zip
        python build_exe.py --package-only   이미 빌드된 폴더로 zip 만 다시 만들기
+       python build_exe.py --dist 폴더      dist 대신 다른 폴더에 만들기
 필요:  pip install "flet[all]" pyinstaller
 
 결과:  dist/FFR-Trainer/        빌드된 실행 파일 폴더
@@ -19,7 +20,8 @@ import flet_cli.__pyinstaller.win_utils as win_utils
 import flet_cli.cli
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-DIST = os.path.join(ROOT, "dist")
+# "--dist 폴더" 로 출력 위치를 바꿀 수 있다 (dist 안의 exe 가 실행 중이라 지울 수 없을 때)
+DIST = os.path.join(ROOT, sys.argv[sys.argv.index("--dist") + 1] if "--dist" in sys.argv else "dist")
 APP = os.path.join(DIST, "FFR-Trainer")
 
 DOCS = ("README.md", "README.ko.md", "README.ja.md", "LICENSE", "THIRD-PARTY-NOTICES.md")
@@ -37,7 +39,7 @@ def _open(file, mode="r", *args, **kwargs):
 
 def build():
     win_utils.open = _open
-    sys.argv = ["flet", "pack", "trainer.py", "-n", "FFR-Trainer", "-D", "-y", "--distpath", "dist"]
+    sys.argv = ["flet", "pack", "trainer.py", "-n", "FFR-Trainer", "-D", "-y", "--distpath", DIST]
     os.chdir(ROOT)
     flet_cli.cli.main()
 

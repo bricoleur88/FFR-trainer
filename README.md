@@ -31,7 +31,7 @@ A trainer for the Steam version of FINAL FANTASY RESONANCE (single-player). It r
 | Reload names | Re-reads item and character names from the game. Use it if names look wrong after a patch or after changing the game language. |
 | Language menu | Switches the interface between 한국어 / English / 日本語. Applies immediately and is remembered. |
 
-Names are shown in whatever language the game is running in.
+Names follow the interface language where available — see [Interface language](#interface-language).
 
 ## Things to know first
 
@@ -129,7 +129,7 @@ These can be deleted; they are recreated on the next run.
 
 | File | Contents |
 |---|---|
-| `names_cache.json` | Names read from the game (kept so later runs start quickly) |
+| `names_cache.json` | Names read from the game, stored per language |
 | `drop_defaults.json` | Original drop rates (used to restore defaults) |
 | `lang.txt` | The interface language you chose (`ko`, `en` or `ja`) |
 
@@ -137,7 +137,10 @@ These can be deleted; they are recreated on the next run.
 
 - Pick 한국어 / English / 日本語 from the **language menu** at the top of the window. It switches immediately and keeps the options you have turned on (encounters, drop rates and so on).
 - On first run the language follows the Windows display language (English unless it is Korean or Japanese).
-- Item and character names are shown in **the language the game is running in**, regardless of the interface language.
+- Item and character names follow the interface language too. However, the trainer can only read names in **the language the game is running in** and in **Japanese (the original text)**.
+  - Japanese names are always available, whatever language the game is in.
+  - For any other language (for example the game in Korean but the interface in English), run the game once in that language and press **Reload names**. The names are then stored and shown from then on, whatever language the game is in.
+  - Until names for the interface language exist, names are shown in the game's language and the status line at the top says so.
 
 ## Running from source (optional)
 
