@@ -4,6 +4,18 @@
 
 A trainer for the Steam version of FINAL FANTASY RESONANCE (single-player). It reads and writes save data and data-table values in the memory of the running game. It does not touch game files or executable code.
 
+## Requirements
+
+| | |
+|---|---|
+| OS | Windows 10 / 11, **64-bit (x64)** — tested on Windows 11 |
+| Game | **FINAL FANTASY RESONANCE, Steam version** (single-player) |
+| Extra software | None for `FFR-Trainer.exe`. Python is only needed when running from source. |
+
+- Other platforms and other store versions of the game are not supported.
+- 32-bit Windows and Windows on ARM are not supported.
+- The game must be running with a save loaded before the trainer can connect.
+
 ## Getting started
 
 1. Start the game and **load a save** (get past the title screen).
