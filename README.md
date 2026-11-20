@@ -152,10 +152,10 @@ To build the executable yourself: `pip install pyinstaller`, then `python build_
 
 ## Limitations
 
-- Encounter control, drop rate changes and adding visions have only been verified as far as the values changing in memory; their effect in actual play has not been thoroughly tested.
+- The effect of some features in actual play has not been thoroughly tested.
 - New items and visions can only be added while free slots exist (see above).
 - There is no in-battle invincibility or one-hit kill.
-- 19 artifacts, 4 key items and 1 piece of equipment have no Korean text in the game; in the Korean interface their names are the author's own translations and may differ from in-game wording.
+- In Korean, some names have no Korean text in the game and are machine-translated, so they may differ from the in-game wording.
 - For the Steam single-player version only.
 
 ## Disclaimer
