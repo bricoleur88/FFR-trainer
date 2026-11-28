@@ -81,7 +81,7 @@ Click a character in the list to load their current values into the edit fields.
 - You can only add as many as the **"Free slots for new entries"** count shown at the top right.
 - Right after loading a save this is usually **0**.
 - To create free slots, obtain **one item of a kind you do not own yet** in the game (buy it in a shop, for example). The game then enlarges the inventory and a few dozen free slots appear.
-- Key items and artifacts are always added with a quantity of 1.
+- Artifacts are always added with a quantity of 1.
 - **Key items** can be story progress conditions, so a confirmation appears before adding them. Owning them early may break the order of events.
 
 ### Visions

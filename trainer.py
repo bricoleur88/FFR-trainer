@@ -500,7 +500,7 @@ class App:
             no_slot = skipped = 0
             for iid in sel:
                 cat = g.item_name(iid)[1]
-                one = 1 if cat in ("중요품", "아티팩트") else n  # 하나만 존재하는 물건
+                one = 1 if cat == "아티팩트" else n  # 하나만 존재하는 물건
                 if iid in owned:
                     g.item_set(owned[iid]["addr"], one)
                 elif cat not in ADDABLE:
